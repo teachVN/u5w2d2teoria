@@ -1,9 +1,12 @@
 package it.epicode.u5w2d2teoria.controller;
 
+import it.epicode.u5w2d2teoria.Dto.StudenteDto;
 import it.epicode.u5w2d2teoria.exception.StudenteNonTrovatoException;
 import it.epicode.u5w2d2teoria.model.Studente;
 import it.epicode.u5w2d2teoria.service.StudenteService;
+import it.epicode.u5w2d2teoria.service.StudenteServiceList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +21,20 @@ public class StudenteController {
 
     @PostMapping("/api/studenti")
     @ResponseStatus(HttpStatus.CREATED)
-    public String saveStudente(@RequestBody Studente studente){
-        return studenteService.saveStudente(studente);
+    public String saveStudente(@RequestBody StudenteDto studenteDto){
+
+        return studenteService.saveStudente(studenteDto);
     }
     @GetMapping("/api/studenti")
-    public List<Studente> getAllStudenti(){
-        return studenteService.getAllStudenti();
+    public Page<Studente> getAllStudenti(@RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "15") int size,
+                                         @RequestParam(defaultValue = "matricola") String sortBy){
+
+        return studenteService.getStudenti(page, size, sortBy);
     }
     @GetMapping("/api/studenti/{matricola}")
     public Studente getStudenteByMatricola(@PathVariable int matricola) throws StudenteNonTrovatoException{
-        Optional<Studente> studenteOpt = studenteService.getStudenteByMatricola(matricola);
+        Optional<Studente> studenteOpt = studenteService.getStudenteById(matricola);
 
         if(studenteOpt.isPresent()){
             return studenteOpt.get();
@@ -36,10 +43,10 @@ public class StudenteController {
             throw new StudenteNonTrovatoException("Studente con matricola " + matricola + " non trovato");
         }
     }
-    @PutMapping(path = "/api/studenti/{matricola}",produces = MediaType.APPLICATION_XML_VALUE)
+    @PutMapping(path = "/api/studenti/{matricola}")
     @ResponseStatus(HttpStatus.OK)
-    public Studente updateStudente(@PathVariable int matricola,@RequestBody Studente studente) throws StudenteNonTrovatoException{
-        return studenteService.updateStudente(matricola, studente);
+    public Studente updateStudente(@PathVariable int matricola,@RequestBody StudenteDto studenteDto) throws StudenteNonTrovatoException{
+        return studenteService.updateStudente(matricola, studenteDto);
     }
     @DeleteMapping("/api/studenti/{matricola}")
     public String deleteStudente(@PathVariable int matricola) throws StudenteNonTrovatoException{
