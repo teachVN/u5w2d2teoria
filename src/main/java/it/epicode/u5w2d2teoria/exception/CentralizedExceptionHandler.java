@@ -12,13 +12,31 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class CentralizedExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(StudenteNonTrovatoException.class)
-    public ResponseEntity<Object> StudenteNonTrovatohandler(StudenteNonTrovatoException e){
+    public ResponseEntity<Object> studenteNonTrovatoHandler(StudenteNonTrovatoException e){
         Error error = new Error();
         error.setMessage(e.getMessage());
         error.setDataErrore(LocalDateTime.now());
         error.setStatoErrore(HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(AulaNonTrovataException.class)
+    public ResponseEntity<Object> aulaNonTrovataHandler(AulaNonTrovataException e){
+        Error error = new Error();
+        error.setMessage(e.getMessage());
+        error.setDataErrore(LocalDateTime.now());
+        error.setStatoErrore(HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> badRequestHandler(BadRequestException e){
+        Error error = new Error();
+        error.setMessage(e.getMessage());
+        error.setDataErrore(LocalDateTime.now());
+        error.setStatoErrore(HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 }

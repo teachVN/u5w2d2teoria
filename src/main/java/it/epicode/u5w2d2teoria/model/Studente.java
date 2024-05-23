@@ -18,6 +18,9 @@ public class Studente {
     private String cognome;
     private LocalDate dataNascita;
 
+    private String foto;
+    private String email;
+
     @ManyToOne
     @JoinColumn(name = "aula_id")
     @JsonIgnore

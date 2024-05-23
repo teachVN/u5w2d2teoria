@@ -2,9 +2,12 @@ package it.epicode.u5w2d2teoria.controller;
 
 import it.epicode.u5w2d2teoria.Dto.AulaDto;
 import it.epicode.u5w2d2teoria.exception.AulaNonTrovataException;
+import it.epicode.u5w2d2teoria.exception.BadRequestException;
 import it.epicode.u5w2d2teoria.model.Aula;
 import it.epicode.u5w2d2teoria.service.AulaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +21,12 @@ public class AulaController {
     private AulaService aulaService;
 
     @PostMapping("/api/aule")
-    public String saveAula(@RequestBody AulaDto aulaDto){
+    public String saveAula(@RequestBody @Validated AulaDto aulaDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new BadRequestException(bindingResult.getAllErrors().stream().
+                    map(objectError -> objectError.getDefaultMessage()).reduce("", ((s, s2) -> s+s2)));
+        }
+
         return aulaService.saveAula(aulaDto);
     }
     @GetMapping("/api/aule")
@@ -39,7 +47,12 @@ public class AulaController {
     }
 
     @PutMapping("/api/aule/{id}")
-    public Aula updateAula(@PathVariable int id,@RequestBody AulaDto aulaDto){
+    public Aula updateAula(@PathVariable int id,@RequestBody @Validated AulaDto aulaDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new BadRequestException(bindingResult.getAllErrors().stream().
+                    map(objectError -> objectError.getDefaultMessage()).reduce("", ((s, s2) -> s+s2)));
+        }
+
         return aulaService.updateAula(id, aulaDto);
     }
 
@@ -47,4 +60,7 @@ public class AulaController {
     public String deleteAula(@PathVariable int id){
         return aulaService.deleteAula(id);
     }
+
+
+
 }
